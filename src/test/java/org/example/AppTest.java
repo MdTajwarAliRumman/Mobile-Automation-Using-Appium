@@ -9,6 +9,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
@@ -19,11 +20,17 @@ public class AppTest {
 
         @BeforeMethod
         public void setUp() throws MalformedURLException {
+            // This is apk fetching from the file
+            File f = new File("src/test/resources");
+            File apk_proppinApp = new File(f, "app-release.apk");
+
             Capabilities options = new BaseOptions()
                     .amend("platformName", "android")
                     .amend("appium:automationName", "UiAutomator2")
                     .amend("appium:deviceName", "local")
                     .amend("appium:udid", "emulator-5554")
+                    // this code below should be written when we uninstall an app and then dynamically install it
+                    //.amend("app",apk_proppinApp.getAbsoluteFile())
                     .amend("appium:appPackage", "com.example.naseerghori22")
                     .amend("appium:appActivity", "com.example.naseerghori22.MainActivity")
                     .amend("appium:ensureWebviewsHavePages", true)
@@ -37,7 +44,8 @@ public class AppTest {
         }
 
         @Test
-        public void sampleTest() {
+        public void sampleTest() throws InterruptedException {
+            // using recorder code gen
             WebElement el1 = driver.findElement(AppiumBy.androidUIAutomator("new UiSelector().className(\"android.view.View\").instance(3)"));
             el1.click();
             WebElement el2 = driver.findElement(AppiumBy.accessibilityId("Sign Up"));
@@ -69,10 +77,18 @@ public class AppTest {
             el12.click();
             WebElement el13 = driver.findElement(AppiumBy.androidUIAutomator("new UiSelector().description(\"Sign Up\").instance(1)"));
             el13.click();
+            Thread.sleep(5000);
+
+            //for dropdown option selection this will be the line
+            //WebElement nepalOption =driver.findElement(AppiumBy.androidUIAutomator("new UIScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Bangla\"))"))
+            //nepalOption.click();
         }
+
 
         @AfterMethod
         public void tearDown() {
+            // when app needs to get uninstalled use the below code:
+            //driver.removeApp("com.example.naseerghori22");
             driver.quit();
         }
 
